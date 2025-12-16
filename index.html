@@ -3,974 +3,205 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Trading Signal Pro | AI Trading Platform</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        :root {
-            --primary-dark: #0F172A;
-            --secondary-dark: #1E293B;
-            --accent-blue: #3B82F6;
-            --accent-green: #10B981;
-            --accent-red: #EF4444;
-            --accent-purple: #8B5CF6;
-            --text-primary: #F8FAFC;
-            --text-secondary: #94A3B8;
-            --border-color: #334155;
-            --card-radius: 12px;
-            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-            background-color: var(--primary-dark);
-            color: var(--text-primary);
-            line-height: 1.6;
-            overflow-x: hidden;
-        }
-
-        .trading-container {
-            display: grid;
-            grid-template-columns: 280px 1fr 350px;
-            grid-template-rows: 60px 1fr;
-            min-height: 100vh;
-            gap: 1px;
-            background-color: var(--border-color);
-        }
-
-        /* Header */
-        .header {
-            grid-column: 1 / -1;
-            background: var(--secondary-dark);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 24px;
-            border-bottom: 1px solid var(--border-color);
-            z-index: 100;
-        }
-
-        .logo-section {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .logo {
-            font-size: 22px;
-            font-weight: 700;
-            background: linear-gradient(45deg, var(--accent-blue), var(--accent-purple));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .status-indicator {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 12px;
-            color: var(--accent-green);
-        }
-
-        .status-dot {
-            width: 8px;
-            height: 8px;
-            background-color: var(--accent-green);
-            border-radius: 50%;
-            animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
-        }
-
-        .header-stats {
-            display: flex;
-            gap: 32px;
-        }
-
-        .stat-item {
-            text-align: center;
-        }
-
-        .stat-value {
-            font-size: 16px;
-            font-weight: 600;
-            color: var(--text-primary);
-        }
-
-        .stat-label {
-            font-size: 11px;
-            color: var(--text-secondary);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        /* Left Panel - Controls */
-        .left-panel {
-            background: var(--secondary-dark);
-            padding: 20px;
-            border-right: 1px solid var(--border-color);
-            display: flex;
-            flex-direction: column;
-            gap: 24px;
-        }
-
-        .panel-section {
-            background: rgba(30, 41, 59, 0.8);
-            border-radius: var(--card-radius);
-            padding: 20px;
-            border: 1px solid var(--border-color);
-        }
-
-        .section-title {
-            font-size: 14px;
-            font-weight: 600;
-            color: var(--text-secondary);
-            margin-bottom: 16px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .section-title i {
-            color: var(--accent-blue);
-        }
-
-        .input-group {
-            margin-bottom: 16px;
-        }
-
-        .input-group label {
-            display: block;
-            font-size: 12px;
-            color: var(--text-secondary);
-            margin-bottom: 6px;
-            font-weight: 500;
-        }
-
-        select {
-            width: 100%;
-            padding: 10px 12px;
-            background: rgba(15, 23, 42, 0.8);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            color: var(--text-primary);
-            font-size: 13px;
-            cursor: pointer;
-            transition: var(--transition);
-        }
-
-        select:focus {
-            outline: none;
-            border-color: var(--accent-blue);
-            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
-        }
-
-        .btn {
-            width: 100%;
-            padding: 14px;
-            border: none;
-            border-radius: 8px;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: var(--transition);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
-            color: white;
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(59, 130, 246, 0.3);
-        }
-
-        .btn-success {
-            background: linear-gradient(135deg, var(--accent-green), #34D399);
-            color: white;
-        }
-
-        .btn-success:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(16, 185, 129, 0.3);
-        }
-
-        /* Main Chart Area */
-        .main-content {
-            background: var(--primary-dark);
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
-
-        .chart-container {
-            background: var(--secondary-dark);
-            border-radius: var(--card-radius);
-            border: 1px solid var(--border-color);
-            flex: 1;
-            overflow: hidden;
-        }
-
-        .chart-header {
-            padding: 16px 24px;
-            border-bottom: 1px solid var(--border-color);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .chart-title {
-            font-size: 16px;
-            font-weight: 600;
-        }
-
-        .timeframes {
-            display: flex;
-            gap: 4px;
-            background: rgba(15, 23, 42, 0.8);
-            padding: 4px;
-            border-radius: 8px;
-        }
-
-        .timeframe-btn {
-            padding: 6px 12px;
-            border: none;
-            background: transparent;
-            color: var(--text-secondary);
-            font-size: 12px;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: var(--transition);
-        }
-
-        .timeframe-btn.active {
-            background: var(--accent-blue);
-            color: white;
-        }
-
-        #trading-chart {
-            height: 400px;
-            width: 100%;
-            background: rgba(15, 23, 42, 0.5);
-        }
-
-        /* Right Panel - Signals & Orders */
-        .right-panel {
-            background: var(--secondary-dark);
-            padding: 20px;
-            border-left: 1px solid var(--border-color);
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
-
-        .signal-card {
-            background: linear-gradient(135deg, rgba(30, 41, 59, 0.8), rgba(15, 23, 42, 0.8));
-            border-radius: var(--card-radius);
-            padding: 24px;
-            border: 1px solid var(--border-color);
-            text-align: center;
-        }
-
-        .signal-direction {
-            font-size: 42px;
-            font-weight: 700;
-            margin: 20px 0;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-        }
-
-        .signal-direction.buy {
-            color: var(--accent-green);
-            text-shadow: 0 0 30px rgba(16, 185, 129, 0.5);
-        }
-
-        .signal-direction.sell {
-            color: var(--accent-red);
-            text-shadow: 0 0 30px rgba(239, 68, 68, 0.5);
-        }
-
-        .signal-meta {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 16px;
-            margin-top: 24px;
-        }
-
-        .meta-item {
-            text-align: center;
-            padding: 12px;
-            background: rgba(15, 23, 42, 0.6);
-            border-radius: 8px;
-        }
-
-        .meta-label {
-            font-size: 11px;
-            color: var(--text-secondary);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .meta-value {
-            font-size: 18px;
-            font-weight: 700;
-            margin-top: 4px;
-        }
-
-        /* Orders Table */
-        .orders-table {
-            background: rgba(30, 41, 59, 0.8);
-            border-radius: var(--card-radius);
-            border: 1px solid var(--border-color);
-            overflow: hidden;
-        }
-
-        .table-header {
-            padding: 16px 20px;
-            border-bottom: 1px solid var(--border-color);
-            font-size: 14px;
-            font-weight: 600;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .table-content {
-            max-height: 300px;
-            overflow-y: auto;
-        }
-
-        .order-row {
-            display: grid;
-            grid-template-columns: 1fr 80px 80px 80px;
-            padding: 12px 20px;
-            border-bottom: 1px solid var(--border-color);
-            font-size: 13px;
-            align-items: center;
-        }
-
-        .order-row:last-child {
-            border-bottom: none;
-        }
-
-        .order-pair {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .order-type {
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 11px;
-            font-weight: 600;
-        }
-
-        .order-type.buy {
-            background: rgba(16, 185, 129, 0.2);
-            color: var(--accent-green);
-        }
-
-        .order-type.sell {
-            background: rgba(239, 68, 68, 0.2);
-            color: var(--accent-red);
-        }
-
-        /* Progress Animation */
-        .progress-container {
-            margin-top: 20px;
-        }
-
-        .progress-label {
-            display: flex;
-            justify-content: space-between;
-            font-size: 12px;
-            color: var(--text-secondary);
-            margin-bottom: 8px;
-        }
-
-        .progress-bar {
-            height: 6px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 3px;
-            overflow: hidden;
-        }
-
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, var(--accent-blue), var(--accent-purple));
-            width: 0%;
-            transition: width 3s linear;
-            border-radius: 3px;
-        }
-
-        /* Responsive */
-        @media (max-width: 1200px) {
-            .trading-container {
-                grid-template-columns: 250px 1fr 300px;
-            }
-        }
-
-        @media (max-width: 992px) {
-            .trading-container {
-                grid-template-columns: 1fr;
-                grid-template-rows: auto;
-            }
-            
-            .left-panel, .right-panel {
-                display: none;
-            }
-        }
-
-        /* Animations */
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .fade-in {
-            animation: fadeIn 0.5s ease forwards;
-        }
-
-        /* Tooltip */
-        [data-tooltip] {
-            position: relative;
-        }
-
-        [data-tooltip]:hover::after {
-            content: attr(data-tooltip);
-            position: absolute;
-            bottom: 100%;
-            left: 50%;
-            transform: translateX(-50%);
-            background: rgba(0, 0, 0, 0.9);
-            color: white;
-            padding: 6px 12px;
-            border-radius: 4px;
-            font-size: 12px;
-            white-space: nowrap;
-            z-index: 1000;
-        }
-
-        /* Scrollbar */
-        ::-webkit-scrollbar {
-            width: 6px;
-        }
-
-        ::-webkit-scrollbar-track {
-            background: rgba(255, 255, 255, 0.05);
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: var(--border-color);
-            border-radius: 3px;
-        }
-    </style>
+    <title>Scalping Signal Pro | AI Trading Bot</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="https://unpkg.com/lightweight-charts/dist/lightweight-charts.standalone.production.js"></script>
 </head>
 <body>
-    <div class="trading-container">
-        <!-- Header -->
-        <div class="header">
-            <div class="logo-section">
-                <div class="logo">TRADING AI PRO</div>
+    <div class="container">
+        <div class="sidebar">
+            <div class="logo">
+                <div class="logo-icon">🤖</div>
+                <h1 id="logo-text">Scalping Signal Pro</h1>
+            </div>
+            
+            <div class="bot-status">
                 <div class="status-indicator">
-                    <div class="status-dot"></div>
-                    <span>Система активна</span>
+                    <span class="status-dot" id="status-dot"></span>
+                    <span id="status-text">Соединение с MT5...</span>
                 </div>
             </div>
-            
-            <div class="header-stats">
-                <div class="stat-item">
-                    <div class="stat-value" id="active-signals">12</div>
-                    <div class="stat-label">Сигналы</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-value" id="success-rate">87.5%</div>
-                    <div class="stat-label">Точность</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-value" id="profit-today">+2.4%</div>
-                    <div class="stat-label">Прибыль</div>
-                </div>
-            </div>
-        </div>
 
-        <!-- Left Panel - Controls -->
-        <div class="left-panel">
-            <div class="panel-section">
-                <div class="section-title">
-                    <i class="fas fa-cog"></i> НАСТРОЙКИ ТОРГОВЛИ
+            <div class="settings">
+                <div class="input-group language-dropdown">
+                    <label id="language-label">Язык</label>
+                    <div class="lang-select" id="custom-language-selector">
+                        <button class="lang-selected" onclick="toggleLangDropdown()">
+                            <img id="current-flag" src="https://flagcdn.com/w20/ru.png" alt="RU" class="flag-icon">
+                            <span id="current-lang-text">Русский</span>
+                            <svg class="arrow-down" viewBox="0 0 24 24" width="16" height="16">
+                                <path d="M7 10l5 5 5-5z" fill="currentColor"></path>
+                            </svg>
+                        </button>
+                        <div class="lang-dropdown-content" id="lang-options">
+                            <div class="lang-item" data-lang="ru" data-flag="https://flagcdn.com/w20/ru.png">Русский</div>
+                            <div class="lang-item" data-lang="en" data-flag="https://flagcdn.com/w20/gb.png">English</div>
+                            <div class="lang-item" data-lang="uz" data-flag="https://flagcdn.com/w20/uz.png">O'zbek</div>
+                        </div>
+                    </div>
                 </div>
-                
+
                 <div class="input-group">
-                    <label>ТОРГОВЫЙ ИНСТРУМЕНТ</label>
+                    <label id="market-label">Рынок</label>
+                    <select id="market-type">
+                        <option value="forex">Форекс</option>
+                        <option value="otc">OTC Рынок</option>
+                    </select>
+                </div>
+
+                <div class="input-group">
+                    <label id="currency-label">Инструмент</label>
                     <select id="currency-pair">
-                        <option>EUR/USD</option>
-                        <option>GBP/USD</option>
-                        <option>USD/JPY</option>
-                        <option>XAU/USD</option>
-                        <option>BTC/USD</option>
-                        <option>ETH/USD</option>
-                        <option>AAPL</option>
-                        <option>TSLA</option>
+                        <!-- Forex instruments will be loaded here -->
                     </select>
                 </div>
-                
+
                 <div class="input-group">
-                    <label>ТАЙМФРЕЙМ</label>
+                    <label id="timeframe-label">Таймфрейм</label>
                     <select id="timeframe">
-                        <option>1 минута</option>
-                        <option>5 минут</option>
-                        <option>15 минут</option>
-                        <option>1 час</option>
-                        <option>4 часа</option>
-                        <option>1 день</option>
+                        <option value="3">3 секунды</option>
+                        <option value="5">5 секунд</option>
+                        <option value="10">10 секунд</option>
+                        <option value="15">15 секунд</option>
+                        <option value="30">30 секунд</option>
+                        <option value="60">1 минута</option>
+                        <option value="120">2 минуты</option>
+                        <option value="180">3 минуты</option>
                     </select>
                 </div>
-                
+
                 <div class="input-group">
-                    <label>СТРАТЕГИЯ АНАЛИЗА</label>
-                    <select id="strategy">
-                        <option>AI Neural Network</option>
-                        <option>RSI + MACD Combo</option>
-                        <option>Bollinger Bands</option>
-                        <option>Fibonacci Levels</option>
-                        <option>Moving Average Cross</option>
-                    </select>
-                </div>
-                
-                <button id="analyze-btn" class="btn btn-primary">
-                    <i class="fas fa-brain"></i> АНАЛИЗИРОВАТЬ РЫНОК
-                </button>
-            </div>
-            
-            <div class="panel-section">
-                <div class="section-title">
-                    <i class="fas fa-chart-line"></i> ПАРАМЕТРЫ СИГНАЛА
-                </div>
-                
-                <div class="input-group">
-                    <label>РИСК НА СДЕЛКУ</label>
+                    <label id="risk-label">Уровень риска</label>
                     <select id="risk-level">
-                        <option>Консервативный (1%)</option>
-                        <option>Умеренный (2%)</option>
-                        <option>Агрессивный (5%)</option>
+                        <option value="low">Низкий</option>
+                        <option value="medium" selected>Средний</option>
+                        <option value="high">Высокий</option>
                     </select>
                 </div>
-                
-                <div class="input-group">
-                    <label>ТАРГЕТ ПРИБЫЛИ</label>
-                    <select id="take-profit">
-                        <option>1:2 Риск/Прибыль</option>
-                        <option>1:3 Риск/Прибыль</option>
-                        <option>1:5 Риск/Прибыль</option>
-                    </select>
+
+                <div class="button-group">
+                    <button id="start-bot" class="button button-green">
+                        <span class="button-icon">▶️</span>
+                        <span id="start-btn-text">Запуск бота</span>
+                    </button>
+                    <button id="stop-bot" class="button button-red" disabled>
+                        <span class="button-icon">⏹️</span>
+                        <span id="stop-btn-text">Остановить</span>
+                    </button>
+                    <a href="https://t.me/+hScZSoUXQe9jN2Ji" target="_blank" class="button button-blue">
+                        <svg xmlns="http://www.w3.org/2000/svg" height="16" viewBox="0 0 24 24" fill="white">
+                            <path d="M9.93 12.645 9.6 16.306c.49 0 .703-.21.96-.46l2.3-2.175 4.77 3.48c.87.48 1.5.23 1.72-.81l3.12-14.7c.28-1.25-.45-1.74-1.29-1.45L1.56 9.03c-1.21.47-1.2 1.14-.21 1.44l4.96 1.55L18.39 4.92c.45-.3.87-.13.53.17L9.93 12.645z"/>
+                        </svg>
+                        Telegram Канал
+                    </a>
                 </div>
-                
-                <button id="generate-signal-btn" class="btn btn-success">
-                    <i class="fas fa-bolt"></i> ПОЛУЧИТЬ СИГНАЛ
-                </button>
+            </div>
+
+            <div class="statistics">
+                <h3 id="stats-title">Статистика</h3>
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <span class="stat-label" id="total-signals-label">Всего сигналов</span>
+                        <span class="stat-value" id="total-signals">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label" id="win-rate-label">Win Rate</span>
+                        <span class="stat-value" id="win-rate">0%</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label" id="profit-label">Прибыль</span>
+                        <span class="stat-value profit-positive" id="profit">+0.00</span>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <!-- Main Chart Area -->
         <div class="main-content">
-            <div class="chart-container">
+            <div class="chart-block">
                 <div class="chart-header">
-                    <div class="chart-title" id="current-pair">EUR/USD - График в реальном времени</div>
-                    <div class="timeframes">
-                        <button class="timeframe-btn active">1M</button>
-                        <button class="timeframe-btn">5M</button>
-                        <button class="timeframe-btn">15M</button>
-                        <button class="timeframe-btn">1H</button>
-                        <button class="timeframe-btn">4H</button>
-                        <button class="timeframe-btn">1D</button>
+                    <h2 id="chart-title">График в реальном времени</h2>
+                    <div class="chart-controls">
+                        <button id="chart-type-btn" class="chart-btn">Свечи</button>
+                        <button id="timeframe-quick-btn" class="chart-btn active">5s</button>
                     </div>
                 </div>
-                <div id="trading-chart"></div>
+                <div id="chart-container"></div>
             </div>
-            
-            <div class="chart-container">
-                <div class="chart-header">
-                    <div class="chart-title">ИСТОРИЯ СИГНАЛОВ</div>
-                </div>
-                <div class="table-content">
-                    <div class="order-row">
-                        <div class="order-pair">
-                            <span class="order-type buy">BUY</span>
-                            <span>EUR/USD</span>
-                        </div>
-                        <div>1.0954</div>
-                        <div>1.1020</div>
-                        <div style="color: var(--accent-green);">+66 pips</div>
-                    </div>
-                    <div class="order-row">
-                        <div class="order-pair">
-                            <span class="order-type sell">SELL</span>
-                            <span>GBP/USD</span>
-                        </div>
-                        <div>1.2750</div>
-                        <div>1.2680</div>
-                        <div style="color: var(--accent-green);">+70 pips</div>
-                    </div>
-                    <div class="order-row">
-                        <div class="order-pair">
-                            <span class="order-type buy">BUY</span>
-                            <span>XAU/USD</span>
-                        </div>
-                        <div>1980.5</div>
-                        <div>1995.2</div>
-                        <div style="color: var(--accent-green);">+14.7</div>
-                    </div>
-                    <div class="order-row">
-                        <div class="order-pair">
-                            <span class="order-type sell">SELL</span>
-                            <span>USD/JPY</span>
-                        </div>
-                        <div>148.20</div>
-                        <div>147.85</div>
-                        <div style="color: var(--accent-green);">+35 pips</div>
-                    </div>
-                </div>
-            </div>
-        </div>
 
-        <!-- Right Panel - Signals -->
-        <div class="right-panel">
-            <div class="signal-card">
-                <div class="section-title">
-                    <i class="fas fa-bullhorn"></i> ТЕКУЩИЙ СИГНАЛ
+            <div class="signal-block">
+                <div class="signal-header">
+                    <h2 id="signal-title">Текущий сигнал</h2>
+                    <div class="signal-meta">
+                        <span id="signal-time">--:--:--</span>
+                        <span class="signal-countdown" id="signal-countdown"></span>
+                    </div>
                 </div>
-                
-                <div id="signal-result">
-                    <div style="color: var(--text-secondary); font-size: 14px;">
-                        <i class="fas fa-sync-alt fa-spin"></i> Ожидание анализа...
-                    </div>
-                    
-                    <div class="signal-direction" id="signal-direction" style="display: none;">
-                        ПОКУПКА
-                    </div>
-                    
-                    <div class="signal-meta" id="signal-meta" style="display: none;">
-                        <div class="meta-item">
-                            <div class="meta-label">ПАРА</div>
-                            <div class="meta-value" id="signal-pair">EUR/USD</div>
-                        </div>
-                        <div class="meta-item">
-                            <div class="meta-label">ЦЕЛЬ</div>
-                            <div class="meta-value" id="signal-target">1.1020</div>
-                        </div>
-                        <div class="meta-item">
-                            <div class="meta-label">СТОП</div>
-                            <div class="meta-value" id="signal-stop">1.0880</div>
-                        </div>
-                        <div class="meta-item">
-                            <div class="meta-label">ВЕРОЯТНОСТЬ</div>
-                            <div class="meta-value" id="signal-confidence">87%</div>
-                        </div>
-                    </div>
-                    
-                    <div class="progress-container" id="progress-container" style="display: none;">
-                        <div class="progress-label">
-                            <span>Генерация сигнала</span>
-                            <span id="progress-percent">0%</span>
+                <div id="signal-result" class="signal-result">
+                    <div class="analyzing-container">
+                        <div class="signal-analyzing" id="analyzing-text">
+                            Ожидание сигнала
+                            <span class="dots">
+                                <span>.</span><span>.</span><span>.</span>
+                            </span>
                         </div>
                         <div class="progress-bar">
                             <div class="progress-fill" id="progress-fill"></div>
                         </div>
                     </div>
+                    <div class="signal-details" id="signal-details" style="display: none;">
+                        <div class="signal-main">
+                            <span class="signal-pair" id="signal-pair">---</span>
+                            <span class="signal-direction" id="signal-direction"></span>
+                        </div>
+                        <div class="signal-info">
+                            <div class="info-row">
+                                <span class="info-label">Вход:</span>
+                                <span class="info-value" id="entry-price">--.--</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">Закрытие:</span>
+                                <span class="info-value" id="close-price">--.--</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">Результат:</span>
+                                <span class="info-value" id="signal-result-text">--</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">Вероятность:</span>
+                                <span class="info-value" id="signal-probability">--%</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
-            
-            <div class="orders-table">
-                <div class="table-header">
-                    <span>АКТИВНЫЕ СИГНАЛЫ</span>
-                    <span style="color: var(--text-secondary); font-size: 12px;">5 шт.</span>
+
+            <div class="history-block">
+                <div class="history-header">
+                    <h2 id="history-title">История сигналов</h2>
+                    <button id="clear-history" class="button-small">Очистить</button>
                 </div>
-                <div class="table-content">
-                    <!-- Active signals will be populated here -->
+                <div class="history-table-container">
+                    <table class="history-table">
+                        <thead>
+                            <tr>
+                                <th>Время</th>
+                                <th>Пара</th>
+                                <th>Направление</th>
+                                <th>Вход</th>
+                                <th>Закрытие</th>
+                                <th>Результат</th>
+                            </tr>
+                        </thead>
+                        <tbody id="history-body">
+                            <!-- History rows will be inserted here -->
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
     </div>
 
-    <script>
-        // Initialize variables
-        let currentSignal = null;
-        let isAnalyzing = false;
-
-        // DOM Elements
-        const analyzeBtn = document.getElementById('analyze-btn');
-        const generateSignalBtn = document.getElementById('generate-signal-btn');
-        const signalResult = document.getElementById('signal-result');
-        const signalDirection = document.getElementById('signal-direction');
-        const signalMeta = document.getElementById('signal-meta');
-        const progressContainer = document.getElementById('progress-container');
-        const progressFill = document.getElementById('progress-fill');
-        const progressPercent = document.getElementById('progress-percent');
-        const currencyPairSelect = document.getElementById('currency-pair');
-        const timeframeSelect = document.getElementById('timeframe');
-        const currentPairElement = document.getElementById('current-pair');
-
-        // Trading pairs with current prices
-        const tradingPairs = {
-            'EUR/USD': { price: 1.0954, change: '+0.12%' },
-            'GBP/USD': { price: 1.2750, change: '-0.08%' },
-            'USD/JPY': { price: 148.20, change: '+0.25%' },
-            'XAU/USD': { price: 1980.5, change: '+0.45%' },
-            'BTC/USD': { price: 42050, change: '+1.2%' },
-            'ETH/USD': { price: 2250, change: '+0.8%' },
-            'AAPL': { price: 185.2, change: '-0.3%' },
-            'TSLA': { price: 240.5, change: '+1.5%' }
-        };
-
-        // Initialize
-        document.addEventListener('DOMContentLoaded', function() {
-            updateCurrentPair();
-            simulateMarketData();
-            
-            // Event Listeners
-            analyzeBtn.addEventListener('click', analyzeMarket);
-            generateSignalBtn.addEventListener('click', generateTradingSignal);
-            currencyPairSelect.addEventListener('change', updateCurrentPair);
-            
-            // Timeframe buttons
-            document.querySelectorAll('.timeframe-btn').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    document.querySelectorAll('.timeframe-btn').forEach(b => b.classList.remove('active'));
-                    this.classList.add('active');
-                });
-            });
-        });
-
-        // Update current pair display
-        function updateCurrentPair() {
-            const pair = currencyPairSelect.value.split(' ')[0];
-            currentPairElement.textContent = `${pair} - График в реальном времени`;
-            
-            // Update price in header stats
-            const pairData = tradingPairs[pair] || { price: 'N/A', change: '0.00%' };
-            document.getElementById('profit-today').textContent = pairData.change;
-        }
-
-        // Simulate market data updates
-        function simulateMarketData() {
-            setInterval(() => {
-                // Randomly update some stats
-                const activeSignals = Math.floor(Math.random() * 5) + 10;
-                const successRate = (85 + Math.random() * 5).toFixed(1);
-                
-                document.getElementById('active-signals').textContent = activeSignals;
-                document.getElementById('success-rate').textContent = `${successRate}%`;
-                
-                // Update pair prices slightly
-                Object.keys(tradingPairs).forEach(pair => {
-                    const change = (Math.random() - 0.5) * 0.1;
-                    tradingPairs[pair].price *= (1 + change / 100);
-                    tradingPairs[pair].change = `${change >= 0 ? '+' : ''}${change.toFixed(2)}%`;
-                });
-                
-                updateCurrentPair();
-            }, 5000);
-        }
-
-        // Analyze market function
-        function analyzeMarket() {
-            if (isAnalyzing) return;
-            
-            isAnalyzing = true;
-            analyzeBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> АНАЛИЗ...';
-            analyzeBtn.disabled = true;
-            
-            // Simulate analysis delay
-            setTimeout(() => {
-                isAnalyzing = false;
-                analyzeBtn.innerHTML = '<i class="fas fa-brain"></i> АНАЛИЗ ЗАВЕРШЕН';
-                analyzeBtn.disabled = false;
-                
-                // Reset button after 2 seconds
-                setTimeout(() => {
-                    analyzeBtn.innerHTML = '<i class="fas fa-brain"></i> АНАЛИЗИРОВАТЬ РЫНОК';
-                }, 2000);
-                
-                // Show success message
-                showNotification('Анализ рынка завершен. Система готова к генерации сигналов.', 'success');
-            }, 3000);
-        }
-
-        // Generate trading signal
-        function generateTradingSignal() {
-            if (isAnalyzing) return;
-            
-            // Reset display
-            signalDirection.style.display = 'none';
-            signalMeta.style.display = 'none';
-            progressContainer.style.display = 'block';
-            
-            // Show analyzing state
-            signalResult.innerHTML = `
-                <div style="color: var(--accent-blue); font-size: 14px; margin-bottom: 20px;">
-                    <i class="fas fa-brain fa-spin"></i> AI анализирует рыночные данные...
-                </div>
-            `;
-            
-            // Start progress animation
-            let progress = 0;
-            const progressInterval = setInterval(() => {
-                progress += 1;
-                progressFill.style.width = `${progress}%`;
-                progressPercent.textContent = `${progress}%`;
-                
-                if (progress >= 100) {
-                    clearInterval(progressInterval);
-                    showSignal();
-                }
-            }, 30);
-        }
-
-        // Show generated signal
-        function showSignal() {
-            const pair = currencyPairSelect.value.split(' ')[0];
-            const timeframe = timeframeSelect.value;
-            
-            // Generate random signal
-            const isBuy = Math.random() > 0.45;
-            const currentPrice = tradingPairs[pair]?.price || 1.0954;
-            const targetPrice = isBuy ? 
-                (currentPrice * (1 + (0.5 + Math.random() * 1) / 100)).toFixed(4) :
-                (currentPrice * (1 - (0.5 + Math.random() * 1) / 100)).toFixed(4);
-                
-            const stopPrice = isBuy ?
-                (currentPrice * (1 - (0.2 + Math.random() * 0.3) / 100)).toFixed(4) :
-                (currentPrice * (1 + (0.2 + Math.random() * 0.3) / 100)).toFixed(4);
-                
-            const confidence = Math.floor(70 + Math.random() * 25);
-            
-            // Update signal display
-            signalDirection.textContent = isBuy ? 'ПОКУПКА' : 'ПРОДАЖА';
-            signalDirection.className = `signal-direction ${isBuy ? 'buy' : 'sell'}`;
-            
-            document.getElementById('signal-pair').textContent = pair;
-            document.getElementById('signal-target').textContent = targetPrice;
-            document.getElementById('signal-stop').textContent = stopPrice;
-            document.getElementById('signal-confidence').textContent = `${confidence}%`;
-            
-            // Show signal
-            signalResult.innerHTML = '';
-            signalDirection.style.display = 'block';
-            signalMeta.style.display = 'grid';
-            progressContainer.style.display = 'none';
-            
-            // Reset progress
-            progressFill.style.width = '0%';
-            progressPercent.textContent = '0%';
-            
-            // Add to history
-            addToHistory(pair, isBuy ? 'BUY' : 'SELL', currentPrice, targetPrice);
-            
-            // Show notification
-            showNotification(`Сгенерирован новый торговый сигнал для ${pair}`, 'info');
-        }
-
-        // Add signal to history
-        function addToHistory(pair, type, entry, target) {
-            const tableContent = document.querySelector('.table-content');
-            const entryPrice = parseFloat(entry).toFixed(type === 'BUY' ? 4 : 2);
-            const targetPrice = parseFloat(target).toFixed(type === 'BUY' ? 4 : 2);
-            
-            // Calculate pips/points
-            let difference = 0;
-            if (pair.includes('/')) {
-                // Forex pair
-                const multiplier = pair.includes('JPY') ? 100 : 10000;
-                difference = Math.abs((targetPrice - entryPrice) * multiplier).toFixed(1);
-            } else {
-                // Stock/Crypto
-                difference = Math.abs(targetPrice - entryPrice).toFixed(2);
-            }
-            
-            const row = document.createElement('div');
-            row.className = 'order-row fade-in';
-            row.innerHTML = `
-                <div class="order-pair">
-                    <span class="order-type ${type.toLowerCase()}">${type}</span>
-                    <span>${pair}</span>
-                </div>
-                <div>${entryPrice}</div>
-                <div>${targetPrice}</div>
-                <div style="color: var(--accent-green);">+${difference} ${pair.includes('/') ? 'pips' : 'points'}</div>
-            `;
-            
-            tableContent.insertBefore(row, tableContent.firstChild);
-            
-            // Limit history to 10 entries
-            if (tableContent.children.length > 10) {
-                tableContent.removeChild(tableContent.lastChild);
-            }
-        }
-
-        // Show notification
-        function showNotification(message, type) {
-            // Create notification element
-            const notification = document.createElement('div');
-            notification.className = `fade-in`;
-            notification.style.cssText = `
-                position: fixed;
-                top: 80px;
-                right: 20px;
-                background: ${type === 'success' ? 'var(--accent-green)' : 'var(--accent-blue)'};
-                color: white;
-                padding: 12px 20px;
-                border-radius: 8px;
-                z-index: 10000;
-                box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-                font-size: 14px;
-                max-width: 300px;
-            `;
-            
-            notification.innerHTML = `
-                <i class="fas fa-${type === 'success' ? 'check-circle' : 'info-circle'}"></i>
-                ${message}
-            `;
-            
-            document.body.appendChild(notification);
-            
-            // Remove after 3 seconds
-            setTimeout(() => {
-                notification.style.opacity = '0';
-                notification.style.transform = 'translateX(100px)';
-                setTimeout(() => document.body.removeChild(notification), 300);
-            }, 3000);
-        }
-
-        // Simulate chart (placeholder)
-        function initChart() {
-            const chartElement = document.getElementById('trading-chart');
-            chartElement.innerHTML = `
-                <div style="padding: 20px; text-align: center; color: var(--text-secondary);">
-                    <i class="fas fa-chart-line" style="font-size: 48px; margin-bottom: 20px; opacity: 0.3;"></i>
-                    <div>Реальный график будет отображаться здесь</div>
-                    <div style="font-size: 12px; margin-top: 10px;">Используйте TradingView, Chart.js или другую библиотеку</div>
-                </div>
-            `;
-        }
-
-        // Initialize chart
-        initChart();
-    </script>
+    <script src="script.js"></script>
 </body>
 </html>
